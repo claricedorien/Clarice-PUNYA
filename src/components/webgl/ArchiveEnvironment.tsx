@@ -345,16 +345,31 @@ export const ArchiveEnvironment: React.FC<ArchiveEnvironmentProps> = ({
     doorLight.position.set(-1.4, 1.4, -2.0);
     worldTrain.add(doorLight);
 
-    // Girl Silhouette at z = -12 with micro-animation posture
+    // --- FIGURE 01: THE GIRL ON PLATFORM THREE (EMERGES 50% - 72%) ---
     const girlGroup = new THREE.Group();
     girlGroup.position.set(1.4, 0.35, -12);
-    const girlMat = new THREE.MeshStandardMaterial({ color: 0x040405, roughness: 0.9 });
-    const girlBody = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.26, 1.3, 12), girlMat);
-    girlBody.position.y = 0.65;
-    const girlHead = new THREE.Mesh(new THREE.SphereGeometry(0.12, 16, 16), girlMat);
-    girlHead.position.y = 1.42;
-    girlGroup.add(girlBody, girlHead);
     worldTrain.add(girlGroup);
+
+    const girlMat = new THREE.MeshStandardMaterial({
+      color: 0x06080c,
+      roughness: 0.65,
+      transparent: true,
+      opacity: 0,
+    });
+    const girlBody = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.26, 1.35, 16), girlMat);
+    girlBody.position.y = 0.68;
+    const girlHead = new THREE.Mesh(new THREE.SphereGeometry(0.125, 16, 16), girlMat);
+    girlHead.position.y = 1.46;
+    const girlArmL = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.04, 0.65), girlMat);
+    girlArmL.position.set(-0.18, 0.8, 0);
+    const girlArmR = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.04, 0.65), girlMat);
+    girlArmR.position.set(0.18, 0.8, 0);
+    girlGroup.add(girlBody, girlHead, girlArmL, girlArmR);
+
+    // Dedicated amber backlight rim for the girl
+    const girlRimLight = new THREE.PointLight(0xffdf90, 0, 8, 1.8);
+    girlRimLight.position.set(1.4, 2.0, -13.5);
+    worldTrain.add(girlRimLight);
 
     // -------------------------------------------------------------------------
     // WORLD 02: THE BOY WHO COLLECTED RAIN
@@ -414,21 +429,33 @@ export const ArchiveEnvironment: React.FC<ArchiveEnvironmentProps> = ({
     const rainParticles = new THREE.Points(rainGeom, rainMatParticles);
     worldRain.add(rainParticles);
 
-    // Boy Figure Silhouette holding bottle
+    // --- FIGURE 02: NOAH RAISING APOTHECARY VIAL (EMERGES 48% - 70%) ---
     const boyGroup = new THREE.Group();
     boyGroup.position.set(0.6, 0.3, -9.5);
-    const boyMat = new THREE.MeshStandardMaterial({ color: 0x070b10, roughness: 0.9 });
-    const boyBody = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.22, 1.0, 12), boyMat);
+    worldRain.add(boyGroup);
+
+    const boyMat = new THREE.MeshStandardMaterial({
+      color: 0x080c14,
+      roughness: 0.7,
+      transparent: true,
+      opacity: 0,
+    });
+    const boyBody = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.22, 1.0, 16), boyMat);
     boyBody.position.y = 0.5;
-    const boyHead = new THREE.Mesh(new THREE.SphereGeometry(0.1, 16, 16), boyMat);
-    boyHead.position.y = 1.1;
+    const boyHead = new THREE.Mesh(new THREE.SphereGeometry(0.11, 16, 16), boyMat);
+    boyHead.position.y = 1.12;
     const boyArm = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.04, 0.45), boyMat);
     boyArm.position.set(0.2, 0.7, 0.15);
     boyArm.rotation.x = -0.3;
+    const boyLeftArm = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.04, 0.45), boyMat);
+    boyLeftArm.position.set(-0.2, 0.65, 0.0);
     const heldBottle = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.08, 0.25), bottleMat);
     heldBottle.position.set(0.2, 0.9, 0.3);
-    boyGroup.add(boyBody, boyHead, boyArm, heldBottle);
-    worldRain.add(boyGroup);
+    boyGroup.add(boyBody, boyHead, boyArm, boyLeftArm, heldBottle);
+
+    const boyRimLight = new THREE.PointLight(0xaad0f0, 0, 7, 2.0);
+    boyRimLight.position.set(0.6, 2.0, -11.0);
+    worldRain.add(boyRimLight);
 
     // -------------------------------------------------------------------------
     // WORLD 03: SEVEN MINUTES BEFORE MIDNIGHT
@@ -474,13 +501,28 @@ export const ArchiveEnvironment: React.FC<ArchiveEnvironmentProps> = ({
     solitaryWin.position.set(0.0, 4.2, -22.9);
     worldCity.add(solitaryWin);
 
-    // Rooftop Figure Silhouette
+    // --- FIGURE 03: THE ROOFTOP WATCHER (EMERGES 52% - 72%) ---
     const cityFigure = new THREE.Group();
     cityFigure.position.set(-1.8, 3.2, -9.0);
-    const cityFigMesh = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.22, 1.2), boyMat);
-    cityFigMesh.position.y = 0.6;
-    cityFigure.add(cityFigMesh);
     worldCity.add(cityFigure);
+
+    const cityFigMat = new THREE.MeshStandardMaterial({
+      color: 0x080608,
+      roughness: 0.65,
+      transparent: true,
+      opacity: 0,
+    });
+    const cityFigBody = new THREE.Mesh(new THREE.CylinderGeometry(0.11, 0.26, 1.35, 16), cityFigMat);
+    cityFigBody.position.y = 0.68;
+    const cityFigHead = new THREE.Mesh(new THREE.SphereGeometry(0.12, 16, 16), cityFigMat);
+    cityFigHead.position.y = 1.45;
+    const coatTails = new THREE.Mesh(new THREE.PlaneGeometry(0.35, 0.6), cityFigMat);
+    coatTails.position.set(0, 0.35, -0.15);
+    cityFigure.add(cityFigBody, cityFigHead, coatTails);
+
+    const cityFigRimLight = new THREE.PointLight(0xe8e1d5, 0, 7, 1.8);
+    cityFigRimLight.position.set(-1.8, 4.4, -10.5);
+    worldCity.add(cityFigRimLight);
 
     // -------------------------------------------------------------------------
     // WORLD 04: THE FORGOTTEN ROOM
@@ -516,12 +558,31 @@ export const ArchiveEnvironment: React.FC<ArchiveEnvironmentProps> = ({
     doorLightWedge.position.set(0.2, 1.0, -6.5);
     worldRoom.add(doorLightWedge);
 
-    // Armchair & Shadow Figure
-    const chairMesh = new THREE.Mesh(new THREE.BoxGeometry(0.9, 0.9, 0.8), boyMat);
+    // Armchair
+    const chairMesh = new THREE.Mesh(new THREE.BoxGeometry(0.9, 0.9, 0.8), archMat);
     chairMesh.position.set(1.2, 0.45, -9.0);
-    const shadowFig = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.25, 1.4), boyMat);
-    shadowFig.position.set(0.4, 0.7, -10.5);
-    worldRoom.add(chairMesh, shadowFig);
+    worldRoom.add(chairMesh);
+
+    // --- FIGURE 04: THE UNSEEN RESIDENT (EMERGES 50% - 72%) ---
+    const shadowFigGroup = new THREE.Group();
+    shadowFigGroup.position.set(0.3, 0.1, -8.5);
+    worldRoom.add(shadowFigGroup);
+
+    const roomFigMat = new THREE.MeshStandardMaterial({
+      color: 0x0a0907,
+      roughness: 0.7,
+      transparent: true,
+      opacity: 0,
+    });
+    const shadowFigBody = new THREE.Mesh(new THREE.CylinderGeometry(0.11, 0.24, 1.45, 16), roomFigMat);
+    shadowFigBody.position.y = 0.72;
+    const shadowFigHead = new THREE.Mesh(new THREE.SphereGeometry(0.115, 16, 16), roomFigMat);
+    shadowFigHead.position.y = 1.52;
+    shadowFigGroup.add(shadowFigBody, shadowFigHead);
+
+    const roomFigLight = new THREE.PointLight(0xc9a66b, 0, 8, 1.8);
+    roomFigLight.position.set(0.4, 2.2, -9.5);
+    worldRoom.add(roomFigLight);
 
     // -------------------------------------------------------------------------
     // WORLD 05: A LETTER FROM TOMORROW
@@ -566,15 +627,31 @@ export const ArchiveEnvironment: React.FC<ArchiveEnvironmentProps> = ({
     chronoRing.position.set(0, 1.8, -8);
     worldLetter.add(chronoRing);
 
-    // Messenger Silhouette
+    // --- FIGURE 05: THE CHRONO-MESSENGER (EMERGES 50% - 72%) ---
     const messengerFig = new THREE.Group();
-    messengerFig.position.set(0.8, 0.4, -11.0);
-    const mBody = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.25, 1.4), boyMat);
-    mBody.position.y = 0.7;
-    const mLetter = new THREE.Mesh(new THREE.BoxGeometry(0.2, 0.12, 0.02), winMat);
-    mLetter.position.set(-0.25, 0.95, 0.3);
-    messengerFig.add(mBody, mLetter);
+    messengerFig.position.set(0.6, 0.3, -10.0);
     worldLetter.add(messengerFig);
+
+    const messengerMat = new THREE.MeshStandardMaterial({
+      color: 0x081016,
+      roughness: 0.6,
+      transparent: true,
+      opacity: 0,
+    });
+    const mBody = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.26, 1.4, 16), messengerMat);
+    mBody.position.y = 0.7;
+    const mHead = new THREE.Mesh(new THREE.SphereGeometry(0.12, 16, 16), messengerMat);
+    mHead.position.y = 1.48;
+    const messengerArm = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.04, 0.6), messengerMat);
+    messengerArm.position.set(-0.25, 0.8, 0.2);
+    messengerArm.rotation.x = -0.4;
+    const mLetter = new THREE.Mesh(new THREE.BoxGeometry(0.24, 0.14, 0.02), winMat);
+    mLetter.position.set(-0.25, 0.95, 0.4);
+    messengerFig.add(mBody, mHead, messengerArm, mLetter);
+
+    const messengerRimLight = new THREE.PointLight(0x87c5eb, 0, 8, 1.8);
+    messengerRimLight.position.set(0.8, 2.2, -12.0);
+    worldLetter.add(messengerRimLight);
 
     // -------------------------------------------------------------------------
     // WORLD 06: THE SEA THAT REMEMBERED
@@ -622,13 +699,31 @@ export const ArchiveEnvironment: React.FC<ArchiveEnvironmentProps> = ({
     );
     worldSea.add(seaParticles);
 
-    // Submerged Floating Silhouette Figure
+    // --- FIGURE 06: THE SUBMERGED VOICE (EMERGES 50% - 72%) ---
     const seaFigure = new THREE.Group();
-    seaFigure.position.set(1.2, 1.6, -11.0);
-    const seaBody = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.22, 1.4, 12), boyMat);
-    seaBody.rotation.z = 0.25;
-    seaFigure.add(seaBody);
+    seaFigure.position.set(1.0, 1.6, -9.5);
     worldSea.add(seaFigure);
+
+    const seaFigMat = new THREE.MeshStandardMaterial({
+      color: 0x05141c,
+      roughness: 0.55,
+      transparent: true,
+      opacity: 0,
+    });
+    const seaBody = new THREE.Mesh(new THREE.CylinderGeometry(0.11, 0.22, 1.35, 16), seaFigMat);
+    const seaHead = new THREE.Mesh(new THREE.SphereGeometry(0.11, 16, 16), seaFigMat);
+    seaHead.position.y = 0.78;
+    const seaArmL = new THREE.Mesh(new THREE.CylinderGeometry(0.035, 0.035, 0.6), seaFigMat);
+    seaArmL.position.set(-0.24, 0.2, 0);
+    const seaArmR = new THREE.Mesh(new THREE.CylinderGeometry(0.035, 0.035, 0.6), seaFigMat);
+    seaArmR.position.set(0.24, 0.2, 0);
+    const seaDrapery = new THREE.Mesh(new THREE.PlaneGeometry(0.45, 1.1), seaFigMat);
+    seaDrapery.position.set(0, -0.6, -0.1);
+    seaFigure.add(seaBody, seaHead, seaArmL, seaArmR, seaDrapery);
+
+    const seaFigRimLight = new THREE.PointLight(0x48c8d8, 0, 8, 1.8);
+    seaFigRimLight.position.set(1.0, 2.5, -11.5);
+    worldSea.add(seaFigRimLight);
 
     // =========================================================================
     // CAMERA JOURNEYS & INTERPOLATORS
@@ -758,7 +853,7 @@ export const ArchiveEnvironment: React.FC<ArchiveEnvironmentProps> = ({
     window.addEventListener('resize', onResize);
 
     // =========================================================================
-    // 60 FPS RENDER LOOP WITH FLUID SIGNAL
+    // 60 FPS RENDER LOOP WITH FLUID SIGNAL & NARRATIVE CHARACTER REVEALS
     // =========================================================================
     let animId: number;
     const clock = new THREE.Clock();
@@ -874,7 +969,10 @@ export const ArchiveEnvironment: React.FC<ArchiveEnvironmentProps> = ({
         currentLookAt.z += (targetLookZ - currentLookAt.z) * 0.075;
         camera.lookAt(currentLookAt);
 
-        // --- STORY 01 INTERACTION & REVEAL (The Last Train) ---
+        // Common gradual emergence factor (between 48% and 72% scroll)
+        const figureRevealT = Math.max(0, Math.min(1, (sProg - 0.48) / 0.22));
+
+        // --- STORY 01: THE LAST TRAIN ---
         if (sId === 'story-01') {
           // Train doors slide open strictly mapped to progress (32% - 48%)
           if (sProg < 0.32) {
@@ -892,18 +990,30 @@ export const ArchiveEnvironment: React.FC<ArchiveEnvironmentProps> = ({
             doorLight.intensity = 2.4;
           }
 
-          // Amber lamp soft flicker at 96% - 100%
+          // Station lamp soft flicker at 96% - 100%
           stationLamp.intensity = sProg >= 0.95 && Math.sin(elapsed * 28) > 0.4 ? 1.0 : 3.8;
 
-          // Girl character micro-animation at >85% (head tilt & subtle shift)
-          if (sProg >= 0.85) {
-            girlHead.rotation.y = Math.sin(elapsed * 1.2) * 0.15;
-            girlHead.rotation.x = 0.08;
-            girlGroup.position.x = 1.4 + Math.sin(elapsed * 0.8) * 0.02;
+          // THE GIRL REVEAL & CINEMATIC MICRO-MOTION
+          girlMat.opacity = figureRevealT;
+          girlRimLight.intensity = figureRevealT * 3.6;
+
+          if (sProg >= 0.68) {
+            // Head turns directly toward viewer as camera approaches
+            const turnT = Math.min(1.0, (sProg - 0.68) / 0.16);
+            girlHead.rotation.y = turnT * 0.35 + Math.sin(elapsed * 1.2) * 0.04;
+            girlHead.rotation.x = turnT * 0.08;
+
+            // Stance shift forward at climax (85% - 100%)
+            if (sProg >= 0.85) {
+              const climaxT = (sProg - 0.85) / 0.15;
+              girlGroup.position.z = -12.0 + climaxT * 0.45;
+              girlHead.rotation.z = -0.06;
+              girlArmR.rotation.x = -climaxT * 0.15;
+            }
           }
         }
 
-        // --- STORY 02 INTERACTION & REVEAL (The Boy Who Collected Rain) ---
+        // --- STORY 02: THE BOY WHO COLLECTED RAIN ---
         else if (sId === 'story-02') {
           // Floating bottles gentle bobbing
           bottleRigs.forEach((b) => {
@@ -918,7 +1028,6 @@ export const ArchiveEnvironment: React.FC<ArchiveEnvironmentProps> = ({
 
           for (let i = 0; i < rainCount; i++) {
             positions[i * 3 + 1] += rSpeed;
-            // Bend rain path with pointer speed
             positions[i * 3] += mouse.normX * mouse.speed * 0.05;
 
             if (!isReversing && positions[i * 3 + 1] < -1.0) {
@@ -929,15 +1038,27 @@ export const ArchiveEnvironment: React.FC<ArchiveEnvironmentProps> = ({
           }
           rainGeom.attributes.position.needsUpdate = true;
 
-          // Boy lifting bottle animation as scroll progresses (>65%)
+          // NOAH REVEAL & CINEMATIC MICRO-MOTION
+          boyMat.opacity = figureRevealT;
+          boyRimLight.intensity = figureRevealT * 3.0;
+
           if (sProg >= 0.65) {
-            const liftT = Math.min(1.0, (sProg - 0.65) / 0.25);
-            boyArm.rotation.x = -0.3 - liftT * 0.85;
-            heldBottle.position.y = 0.9 + liftT * 0.35;
+            // Boy raises bottle upward toward sky
+            const liftT = Math.min(1.0, (sProg - 0.65) / 0.20);
+            boyArm.rotation.x = -0.3 - liftT * 0.95;
+            heldBottle.position.y = 0.9 + liftT * 0.42;
+            heldBottle.rotation.z = liftT * 0.2;
+
+            // Reversal awe: left arm extends and head looks up at rising rain
+            if (sProg >= 0.85) {
+              const revT = (sProg - 0.85) / 0.15;
+              boyLeftArm.rotation.x = -revT * 0.6;
+              boyHead.rotation.x = -revT * 0.35;
+            }
           }
         }
 
-        // --- STORY 03 INTERACTION & REVEAL (Seven Minutes Before Midnight) ---
+        // --- STORY 03: SEVEN MINUTES BEFORE MIDNIGHT ---
         else if (sId === 'story-03') {
           // Window blackout cascade (30% to 70%)
           windowClusters.forEach((w, idx) => {
@@ -945,37 +1066,51 @@ export const ArchiveEnvironment: React.FC<ArchiveEnvironmentProps> = ({
             w.visible = sProg < threshold;
           });
 
-          // Solitary 40th floor window pulses warmly
           solitaryWin.scale.setScalar(1.0 + Math.sin(elapsed * 3.0) * 0.08);
 
-          // Rooftop figure looks up at stars during blackout (>68%)
+          // ROOFTOP WATCHER REVEAL & CINEMATIC MICRO-MOTION
+          cityFigMat.opacity = figureRevealT;
+          cityFigRimLight.intensity = figureRevealT * 3.2;
+
           if (sProg >= 0.68) {
-            cityFigure.rotation.x = -0.25;
-            cityFigure.position.y = 3.2 + Math.sin(elapsed * 0.5) * 0.02;
+            // Steps toward parapet edge, coat flutters in the wind
+            const stepT = Math.min(1.0, (sProg - 0.68) / 0.18);
+            cityFigure.position.z = -9.0 + stepT * 0.35;
+            coatTails.rotation.y = Math.sin(elapsed * 4.5) * 0.18;
+
+            // Head tilts upward toward celestial stars
+            cityFigHead.rotation.x = -stepT * 0.45;
           }
         }
 
-        // --- STORY 04 INTERACTION & REVEAL (The Forgotten Room) ---
+        // --- STORY 04: THE FORGOTTEN ROOM ---
         else if (sId === 'story-04') {
           // Door swings open wider as scroll progresses
           const doorAngle = Math.min(0.85, sProg * 1.1);
           ebonDoor.rotation.y = -doorAngle;
           doorLightWedge.intensity = 0.3 + doorAngle * 3.5;
 
-          // Shadow figure passes across wall at >65%
+          // THE UNSEEN RESIDENT REVEAL & CINEMATIC MICRO-MOTION
+          roomFigMat.opacity = figureRevealT;
+          roomFigLight.intensity = figureRevealT * 3.4;
+
           if (sProg >= 0.65) {
-            shadowFig.position.x = 0.4 + Math.sin(elapsed * 0.9) * 0.35;
+            // Steps gently into warm light beam
+            const stepT = Math.min(1.0, (sProg - 0.65) / 0.20);
+            shadowFigGroup.position.x = 0.3 + stepT * 0.45;
+
+            // Head turns welcomingly toward entrance
+            shadowFigHead.rotation.y = -stepT * 0.38 + Math.sin(elapsed * 1.0) * 0.04;
           }
         }
 
-        // --- STORY 05 INTERACTION & REVEAL (A Letter from Tomorrow) ---
+        // --- STORY 05: A LETTER FROM TOMORROW ---
         else if (sId === 'story-05') {
           // Floating paper shards rotating & cursor repulsion
           paperShards.forEach((p) => {
             p.mesh.rotation.x += p.rotSpeed.x;
             p.mesh.rotation.y += p.rotSpeed.y;
 
-            // Push shards away when cursor approaches
             const dX = p.mesh.position.x - mouse.targetX * 2.5;
             const dY = p.mesh.position.y - mouse.targetY * 2.0;
             const dist = Math.sqrt(dX * dX + dY * dY);
@@ -988,21 +1123,26 @@ export const ArchiveEnvironment: React.FC<ArchiveEnvironmentProps> = ({
             }
           });
 
-          // Chronometer ring rotation
           chronoRing.rotation.z = elapsed * 0.4;
           chronoRing.rotation.x = Math.sin(elapsed * 0.3) * 0.2;
 
-          // Messenger extends glowing letter at >65%
+          // THE CHRONO-MESSENGER REVEAL & CINEMATIC MICRO-MOTION
+          messengerMat.opacity = figureRevealT;
+          messengerRimLight.intensity = figureRevealT * 3.2;
+
           if (sProg >= 0.65) {
-            const extT = Math.min(1.0, (sProg - 0.65) / 0.2);
-            messengerFig.position.z = -11.0 + extT * 1.2;
-            mLetter.scale.setScalar(1.0 + Math.sin(elapsed * 4.0) * 0.15);
+            // Extends arm presenting the glowing chronometer seal
+            const extT = Math.min(1.0, (sProg - 0.65) / 0.20);
+            messengerArm.rotation.x = -0.4 - extT * 0.65;
+            messengerArm.position.z = 0.2 + extT * 0.35;
+            mLetter.position.z = 0.4 + extT * 0.45;
+            mLetter.scale.setScalar(1.0 + Math.sin(elapsed * 4.5) * 0.22);
+            messengerFig.position.z = -10.0 + extT * 0.5;
           }
         }
 
-        // --- STORY 06 INTERACTION & REVEAL (The Sea That Remembered) ---
+        // --- STORY 06: THE SEA THAT REMEMBERED ---
         else if (sId === 'story-06') {
-          // Vitrine pulse
           vitrine.position.y = 1.6 + Math.sin(elapsed * 1.8) * 0.05;
 
           // Buoyant marine particles drifting upward
@@ -1014,10 +1154,18 @@ export const ArchiveEnvironment: React.FC<ArchiveEnvironmentProps> = ({
           }
           seaPGeom.attributes.position.needsUpdate = true;
 
-          // Submerged figure gentle undulation in ocean current (>65%)
+          // THE SUBMERGED VOICE REVEAL & CINEMATIC MICRO-MOTION
+          seaFigMat.opacity = figureRevealT;
+          seaFigRimLight.intensity = figureRevealT * 3.5;
+
           if (sProg >= 0.65) {
-            seaFigure.position.y = 1.6 + Math.sin(elapsed * 1.2) * 0.12;
-            seaFigure.rotation.z = 0.25 + Math.sin(elapsed * 0.8) * 0.08;
+            // Weightless sinusoidal buoyancy & arm swell drift
+            seaFigure.position.y = 1.6 + Math.sin(elapsed * 1.4) * 0.16;
+            seaFigure.rotation.z = 0.15 + Math.sin(elapsed * 0.9) * 0.08;
+
+            seaArmL.rotation.z = Math.sin(elapsed * 1.2) * 0.22;
+            seaArmR.rotation.z = -Math.sin(elapsed * 1.2) * 0.22;
+            seaDrapery.rotation.x = Math.sin(elapsed * 1.5) * 0.28;
           }
         }
       }
