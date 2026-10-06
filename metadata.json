@@ -1,0 +1,6 @@
+{
+  "name": "Aetheria · The Floating Story Library",
+  "description": "An immersive interactive 3D digital library of floating story books, atmospheric zero-gravity codices, cinematic reader experiences, and procedural soundscapes.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
