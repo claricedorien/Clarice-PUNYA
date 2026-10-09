@@ -19,6 +19,12 @@
     "paths": {
       "@/*": [
         "./*"
+      ],
+      "@designcodeio/threeui/style.css": [
+        "./src/shaders/threeui.css"
+      ],
+      "@designcodeio/threeui": [
+        "./src/shaders/landing-pages/LandingPages.tsx"
       ]
     },
     "allowImportingTsExtensions": true,

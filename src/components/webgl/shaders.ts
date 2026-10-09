@@ -193,4 +193,85 @@ export const BackgroundFluidShader = {
   `
 };
 
+export const VolumetricBeamShader = {
+  vertexShader: `
+    varying vec2 vUv;
+    varying vec3 vNormal;
+    varying vec3 vViewPosition;
+
+    void main() {
+      vUv = uv;
+      vNormal = normalize(normalMatrix * normal);
+      vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
+      vViewPosition = -mvPosition.xyz;
+      gl_Position = projectionMatrix * mvPosition;
+    }
+  `,
+  fragmentShader: `
+    uniform vec3 uColor;
+    uniform float uIntensity;
+    uniform float uTime;
+    varying vec2 vUv;
+    varying vec3 vNormal;
+    varying vec3 vViewPosition;
+
+    void main() {
+      // Cylindrical / conical vertical fade
+      float vFade = sin(vUv.y * 3.14159265);
+      // Soft rim falloff
+      vec3 normal = normalize(vNormal);
+      vec3 viewDir = normalize(vViewPosition);
+      float rim = 1.0 - abs(dot(normal, viewDir));
+      float beam = pow(rim, 1.6) * vFade;
+
+      // Subtle dynamic dust shimmer
+      float shimmer = 0.85 + 0.15 * sin(vUv.y * 24.0 + uTime * 2.0);
+
+      vec3 col = uColor * beam * uIntensity * shimmer;
+      gl_FragColor = vec4(col, beam * uIntensity * 0.7);
+    }
+  `
+};
+
+export const AtmosphericMistShader = {
+  vertexShader: `
+    varying vec2 vUv;
+    void main() {
+      vUv = uv;
+      gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+    }
+  `,
+  fragmentShader: `
+    uniform float uTime;
+    uniform vec3 uColor;
+    uniform float uOpacity;
+    varying vec2 vUv;
+
+    float hash(vec2 p) {
+      return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453123);
+    }
+    float noise(vec2 p) {
+      vec2 i = floor(p);
+      vec2 f = fract(p);
+      vec2 u = f * f * (3.0 - 2.0 * f);
+      return mix(mix(hash(i + vec2(0.0,0.0)), hash(i + vec2(1.0,0.0)), u.x),
+                 mix(hash(i + vec2(0.0,1.0)), hash(i + vec2(1.0,1.0)), u.x), u.y);
+    }
+
+    void main() {
+      vec2 uv = vUv;
+      float n1 = noise(vec2(uv.x * 3.0 + uTime * 0.05, uv.y * 3.0));
+      float n2 = noise(vec2(uv.x * 6.0 - uTime * 0.03, uv.y * 6.0));
+      float mist = (n1 * 0.6 + n2 * 0.4);
+
+      // Edge fade
+      float edgeX = smoothstep(0.0, 0.2, uv.x) * smoothstep(1.0, 0.8, uv.x);
+      float edgeY = smoothstep(0.0, 0.2, uv.y) * smoothstep(1.0, 0.8, uv.y);
+      float alpha = mist * edgeX * edgeY * uOpacity;
+
+      gl_FragColor = vec4(uColor, alpha);
+    }
+  `
+};
+
 export const StoryArtworkShader = LivingCoverShader;

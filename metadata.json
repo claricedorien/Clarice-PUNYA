@@ -1,6 +1,6 @@
 {
-  "name": "Aetheria · The Floating Story Library",
-  "description": "An immersive interactive 3D digital library of floating story books, atmospheric zero-gravity codices, cinematic reader experiences, and procedural soundscapes.",
+  "name": "Wenyuan Ge · Imperial Digital Library",
+  "description": "An imperial digital library of ancient China. Bamboo scrolls, dynastic annals, jade codices, and a vermilion moon, rendered live in WebGL.",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }

@@ -68,6 +68,13 @@ body,
   width: 100vw !important;
   height: 100vh !important;
   pointer-events: auto;
+  touch-action: pan-y !important;
+}
+
+@media (hover: none) and (pointer: coarse) {
+  .webgl-fixed {
+    pointer-events: none !important;
+  }
 }
 
 .archive-scroll-track,
@@ -100,4 +107,13 @@ body,
 /* Atmospheric Vignette mask */
 .vignette-radial {
   background: radial-gradient(circle at center, transparent 30%, rgba(7, 7, 7, 0.85) 100%);
+}
+
+.shader-frame {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  min-height: 100vh;
+  overflow: hidden;
+  background: #05070a;
 }
