@@ -196,19 +196,21 @@ h1,h2,h3{ font-weight:400; margin:0; letter-spacing:-.005em; }
 .chip:hover p{ color:var(--bone-dim); }
 .chip.on .num{ color:var(--ember); }
 .chip.on b{ color:var(--bone); }
-/* the floating window: an editorial high-definition story preview */
+/* the floating window: a full-bleed, cinematic editorial window */
 .peek{
-  position:absolute; z-index:2; right:clamp(60px,10.5vw,180px); top:clamp(120px,22vh,230px);
-  width:clamp(175px,18vw,285px); display:block;
+  position:absolute; z-index:2; right:clamp(50px,9vw,160px); top:clamp(120px,22vh,230px);
+  width:clamp(200px,21vw,330px); display:block;
   transition:transform .65s var(--ease-out);
 }
 .peek-fr{
   display:block; position:relative; aspect-ratio:16/9;
-  border-radius:4px; overflow:hidden;
-  border:1px solid rgba(223,231,224,.14);
-  box-shadow:0 18px 45px -12px rgba(0,0,0,.85);
-  background:#05070a;
-  transition:border-color .4s var(--ease), box-shadow .4s var(--ease);
+  border-radius:2px; overflow:hidden;
+  border:none;
+  outline:1px solid rgba(223,231,224,.10);
+  outline-offset:0;
+  box-shadow:0 14px 40px -10px rgba(0,0,0,.75);
+  background:transparent;
+  transition:outline-color .4s var(--ease), box-shadow .4s var(--ease);
 }
 .peek-img{
   display:block; width:100%; height:100%;
@@ -218,10 +220,10 @@ h1,h2,h3{ font-weight:400; margin:0; letter-spacing:-.005em; }
 }
 .peek:hover{ transform:translate3d(0,-4px,0); }
 .peek:hover .peek-fr{
-  border-color:rgba(223,231,224,.36);
-  box-shadow:0 24px 54px -12px rgba(0,0,0,.92), 0 0 24px rgba(224,35,28,.14);
+  outline-color:rgba(223,231,224,.28);
+  box-shadow:0 22px 50px -10px rgba(0,0,0,.88), 0 0 20px rgba(224,35,28,.12);
 }
-.peek:hover .peek-img{ transform:scale(1.035); }
+.peek:hover .peek-img{ transform:scale(1.025); }
 .peek-cap{ display:flex; align-items:baseline; gap:8px; margin-top:8px; }
 .peek-cap b{ font-size:11px; font-weight:400; letter-spacing:.22em; color:var(--bone); }
 .peek-cap i{ font-style:normal; font-size:9.5px; letter-spacing:.16em; text-transform:uppercase; color:var(--muted); transition:color .3s; }
@@ -296,17 +298,17 @@ h1,h2,h3{ font-weight:400; margin:0; letter-spacing:-.005em; }
 .card:nth-child(1) .card-fr{
   background:
     linear-gradient(180deg,rgba(3,6,9,.04) 36%,rgba(3,6,9,.72) 100%),
-    url('https://ublctyddhtbgaersvxxb.supabase.co/storage/v1/object/public/threeui-media/scene-images/6884c5281949d2c3530ad4cf/kage-approach.webp') center / cover no-repeat;
+    url('secret-pathways-assets/mulan-card-01-calling.jpg') center / cover no-repeat;
 }
 .card:nth-child(2) .card-fr{
   background:
     linear-gradient(180deg,rgba(3,6,9,.06) 36%,rgba(3,6,9,.74) 100%),
-    url('https://ublctyddhtbgaersvxxb.supabase.co/storage/v1/object/public/threeui-media/scene-images/6884c5281949d2c3530ad4cf/kage-lantern-court.webp') center / cover no-repeat;
+    url('secret-pathways-assets/mulan-card-02-training.jpg') center / cover no-repeat;
 }
 .card:nth-child(3) .card-fr{
   background:
     linear-gradient(180deg,rgba(3,6,9,.05) 36%,rgba(3,6,9,.74) 100%),
-    url('https://ublctyddhtbgaersvxxb.supabase.co/storage/v1/object/public/threeui-media/scene-images/6884c5281949d2c3530ad4cf/kage-moonwater.webp') center / cover no-repeat;
+    url('secret-pathways-assets/mulan-card-03-mountain.jpg') center / cover no-repeat;
 }
 .card-fr::after{ content:''; position:absolute; inset:0;
   background:linear-gradient(transparent 46%, rgba(4,6,9,.80)); pointer-events:none; }
@@ -1057,7 +1059,7 @@ body[data-layout-footer="b"] .foot-base span:last-child{ text-align:right; }
     <span class="k"><b>01</b> — The Imperial Gate</span><span class="rule"></span><span class="k jp">天禄门</span>
   </div>
   <div class="gate-grid">
-    <h2 class="display h-sec" data-rv="up">Carved cinnabar, aged stone, five thousand years open.</h2>
+    <h2 class="display h-sec" data-rv="up">Honor asked for a son.<br>Courage answered with Mulan.</h2>
     <div class="gate-copy">
       <p class="lead" data-rv="up">Mulan begins where worldly expectation dissolves: an ancestral home of quiet courtyard walls and filial duty, standing before an imperial summons. The borrowed armor is not mere iron. It is an enduring vow of family and honor, carried across mountain winds and battlefield snows.</p>
       <p class="body" data-rv="up">Ascend the worn marble steps as the Grand Pavilion lifts out of the mist, its lattice screens lit from inside like a lantern the size of an imperial hall. Above the eaves a vermilion harvest moon holds its place, patient, half hidden. Nothing here is in a hurry. Neither, for the next ninety minutes, are you.</p>
@@ -1093,32 +1095,32 @@ body[data-layout-footer="b"] .foot-base span:last-child{ text-align:right; }
     </span>
   </div>
   <div class="sec-head" data-rv="fade">
-    <span class="k"><b>02</b> — Courtyards of Wisdom</span><span class="rule"></span><span class="k jp">碑亭</span>
+    <span class="k"><b>02</b> — The Path of Mulan</span><span class="rule"></span><span class="k jp">木兰道</span>
   </div>
   <div class="cards" id="cards">
     <article class="card" data-rv="up" data-view="0" data-cursor>
       <div class="card-fr" data-frame>
                 <span class="card-ar"><svg viewBox="0 0 14 14" fill="none"><path d="M3 11 11 3M5 3h6v6" stroke="#dfe7e0" stroke-width="1.3"/></svg></span>
         <i class="glow" style="--gx:80.2%; --gy:23.9%; --gr:22%; --gt:6.1s; --gt2:9.7s; --gc1:rgba(255,142,108,.50); --gc2:rgba(212,56,38,.24)"></i>
-        <div class="card-lab"><b>Approach</b><span class="jp">参道</span></div>
+        <div class="card-lab"><b>The Calling</b><span class="jp">始召</span></div>
       </div>
-      <div class="card-meta"><span>The long climb</span><span>01 / 03</span></div>
+      <div class="card-meta"><span>The House of Fa</span><span>01 / 03</span></div>
     </article>
     <article class="card" data-rv="up" data-view="1" data-cursor>
       <div class="card-fr" data-frame>
                 <span class="card-ar"><svg viewBox="0 0 14 14" fill="none"><path d="M3 11 11 3M5 3h6v6" stroke="#dfe7e0" stroke-width="1.3"/></svg></span>
         <i class="glow glow--flame" style="--gx:70.5%; --gy:47.2%; --gr:14%; --gt:3.7s; --gt2:5.3s; --gc1:rgba(255,198,124,.62); --gc2:rgba(226,118,40,.30)"></i>
-        <div class="card-lab"><b>Lanterns</b><span class="jp">灯籠</span></div>
+        <div class="card-lab"><b>Training</b><span class="jp">秣马砺兵</span></div>
       </div>
-      <div class="card-meta"><span>Lantern court</span><span>02 / 03</span></div>
+      <div class="card-meta"><span>The Borrowed Name</span><span>02 / 03</span></div>
     </article>
     <article class="card" data-rv="up" data-view="2" data-cursor>
       <div class="card-fr" data-frame>
                 <span class="card-ar"><svg viewBox="0 0 14 14" fill="none"><path d="M3 11 11 3M5 3h6v6" stroke="#dfe7e0" stroke-width="1.3"/></svg></span>
         <i class="glow" style="--gx:48.0%; --gy:16.8%; --gr:20%; --gt:7.3s; --gt2:11.2s; --gc1:rgba(255,138,104,.52); --gc2:rgba(208,54,36,.24)"></i>
-        <div class="card-lab"><b>Moonwater</b><span class="jp">月影</span></div>
+        <div class="card-lab"><b>The Battle</b><span class="jp">关山之战</span></div>
       </div>
-      <div class="card-meta"><span>The wet court</span><span>03 / 03</span></div>
+      <div class="card-meta"><span>The Mountain Pass</span><span>03 / 03</span></div>
     </article>
   </div>
 </section>
