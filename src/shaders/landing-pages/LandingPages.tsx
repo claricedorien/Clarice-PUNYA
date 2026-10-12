@@ -913,3 +913,6 @@ export function SylvaHero({ variant = "living-green", ...props }: SylvaHeroProps
     />
   );
 }
+
+export { DarkSoulsHoloCard } from "../../components/DarkSoulsHoloCard";
+export type { DarkSoulsHoloCardProps } from "../../components/DarkSoulsHoloCard";

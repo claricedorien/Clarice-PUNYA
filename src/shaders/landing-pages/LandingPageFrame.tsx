@@ -154,6 +154,17 @@ export function LandingPageFrame({
           postPageCustomization(event.currentTarget, customization);
           applyBackgroundPresentation(event.currentTarget, backgroundCanvasSelector, backgroundVisualSelector);
           applyScene?.(event.currentTarget);
+          try {
+            const doc = event.currentTarget.contentDocument;
+            const cta = doc?.querySelector('.cta');
+            if (cta) {
+              cta.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                window.postMessage({ type: 'BEGIN_THE_WALK' }, '*');
+              });
+            }
+          } catch {}
           setReady(true);
         }}
         style={{

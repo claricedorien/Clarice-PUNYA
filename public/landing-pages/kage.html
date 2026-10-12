@@ -1116,11 +1116,11 @@ body[data-layout-footer="b"] .foot-base span:last-child{ text-align:right; }
     </article>
     <article class="card" data-rv="up" data-view="2" data-cursor>
       <div class="card-fr" data-frame>
-                <span class="card-ar"><svg viewBox="0 0 14 14" fill="none"><path d="M3 11 11 3M5 3h6v6" stroke="#dfe7e0" stroke-width="1.3"/></svg></span>
+        <span class="card-ar"><svg viewBox="0 0 14 14" fill="none"><path d="M3 11 11 3M5 3h6v6" stroke="#dfe7e0" stroke-width="1.3"/></svg></span>
         <i class="glow" style="--gx:48.0%; --gy:16.8%; --gr:20%; --gt:7.3s; --gt2:11.2s; --gc1:rgba(255,138,104,.52); --gc2:rgba(208,54,36,.24)"></i>
-        <div class="card-lab"><b>The Battle</b><span class="jp">关山之战</span></div>
+        <div class="card-lab"><b>The Mountain</b><span class="jp">雪岭关山</span></div>
       </div>
-      <div class="card-meta"><span>The Mountain Pass</span><span>03 / 03</span></div>
+      <div class="card-meta"><span>Courage in Snow</span><span>03 / 03</span></div>
     </article>
   </div>
 </section>
@@ -1239,8 +1239,7 @@ body[data-layout-footer="b"] .foot-base span:last-child{ text-align:right; }
         <circle cx="22" cy="25" r="8.6" fill="#e0231c" fill-opacity=".9"/>
         <path d="M5 13h34M9 18.4h26M22 8.5v27" stroke="#dfe7e0" stroke-width="1.5"/>
       </svg>
-      <p>A five-chapter night walk through a Kyoto mountain temple. Three illustrated garden field notes
-        sit inside a live Three.js sanctuary.</p>
+      <p>Behind the armor is not another soldier, but a woman choosing her own name.</p>
     </div>
     <div><h4>Chapters</h4><ul>
       <li><a href="#gate" data-cursor>The Sanmon</a></li>
@@ -1261,9 +1260,9 @@ body[data-layout-footer="b"] .foot-base span:last-child{ text-align:right; }
     </ul></div>
   </div>
   <div class="foot-base">
-    <span>© 2026 Kage — Kage no Michi</span>
+    <span>© 2026 Kage — Hua Mulan</span>
     <span class="jp">静けさは一つの技である</span>
-    <span>WebGL · Onest · Kyoto</span>
+    <span>The Legend of Mulan</span>
   </div>
 </footer>
 
@@ -4449,11 +4448,28 @@ function wireNav() {
     }
   }, { passive: true });
   $$('a[href^="#"]').forEach(a => a.addEventListener('click', e => {
+    if (a.classList.contains('cta')) {
+      e.preventDefault();
+      e.stopPropagation();
+      try {
+        if (window.parent && window.parent !== window) {
+          window.parent.postMessage({ type: 'BEGIN_THE_WALK' }, '*');
+        }
+      } catch {}
+      window.dispatchEvent(new CustomEvent('BEGIN_THE_WALK'));
+      return;
+    }
     const t = document.querySelector(a.getAttribute('href'));
     if (!t) return;
     e.preventDefault();
     scrollTo({ top: a.getAttribute('href') === '#top' ? 0 : t.offsetTop - 40, behavior: REDUCE ? 'auto' : 'smooth' });
   }));
+
+  window.addEventListener('message', e => {
+    if (e.data?.type === 'CONTINUE_THE_WALK') {
+      scrollTo({ top: 0, behavior: REDUCE ? 'auto' : 'smooth' });
+    }
+  });
 }
 
 function wireFocus() {
