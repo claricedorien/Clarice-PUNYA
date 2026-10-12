@@ -38,9 +38,14 @@ body,
     overflow-y: auto;
   }
 
-  /* Custom cursor enabled on fine pointer */
+  /* Custom cursor enabled on fine pointer only when has-custom-cursor is attached */
   @media (pointer: fine) {
-    body, a, button, input, textarea, [role="button"] {
+    body.has-custom-cursor,
+    body.has-custom-cursor a,
+    body.has-custom-cursor button,
+    body.has-custom-cursor input,
+    body.has-custom-cursor textarea,
+    body.has-custom-cursor [role="button"] {
       cursor: none !important;
     }
   }

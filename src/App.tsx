@@ -2,36 +2,56 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { Scene } from './Scene';
 import { DarkSoulsHoloCard } from './components/DarkSoulsHoloCard';
 import { HoloCardOverlay } from './components/HoloCardOverlay';
+import { CustomCursor } from './components/CustomCursor';
+import {
+  ChapterExperienceModal,
+  ChapterId
+} from './components/ChapterExperienceModal';
 
 export default function App() {
   const [showHoloCard, setShowHoloCard] = useState(false);
+  const [activeChapter, setActiveChapter] = useState<ChapterId | null>(null);
 
   // Listen for message from iframe (kage.html) or custom event
   useEffect(() => {
     const handleMessage = (event: MessageEvent) => {
       if (event.data?.type === 'BEGIN_THE_WALK') {
         setShowHoloCard(true);
+      } else if (event.data?.type === 'OPEN_CHAPTER') {
+        const chId = event.data?.chapterId as ChapterId;
+        if (chId) {
+          setActiveChapter(chId);
+        }
       }
     };
 
-    const handleCustomEvent = () => {
+    const handleHoloEvent = () => {
       setShowHoloCard(true);
     };
 
+    const handleChapterEvent = (e: Event) => {
+      const customEvent = e as CustomEvent<{ chapterId: ChapterId }>;
+      if (customEvent.detail?.chapterId) {
+        setActiveChapter(customEvent.detail.chapterId);
+      }
+    };
+
     window.addEventListener('message', handleMessage);
-    window.addEventListener('BEGIN_THE_WALK', handleCustomEvent);
+    window.addEventListener('BEGIN_THE_WALK', handleHoloEvent);
+    window.addEventListener('OPEN_CHAPTER', handleChapterEvent);
 
     return () => {
       window.removeEventListener('message', handleMessage);
-      window.removeEventListener('BEGIN_THE_WALK', handleCustomEvent);
+      window.removeEventListener('BEGIN_THE_WALK', handleHoloEvent);
+      window.removeEventListener('OPEN_CHAPTER', handleChapterEvent);
     };
   }, []);
 
-  const handleClose = useCallback(() => {
+  const handleCloseHolo = useCallback(() => {
     setShowHoloCard(false);
   }, []);
 
-  const handleContinue = useCallback(() => {
+  const handleContinueHolo = useCallback(() => {
     setShowHoloCard(false);
     // Send message to iframe to continue the walk into the beginning / next chapter
     const iframes = document.querySelectorAll('iframe');
@@ -44,12 +64,41 @@ export default function App() {
     });
   }, []);
 
+  const handleCloseChapter = useCallback(() => {
+    setActiveChapter(null);
+  }, []);
+
+  const handleContinueChapter = useCallback(
+    (nextChapterId: ChapterId | null) => {
+      if (nextChapterId) {
+        // Transition directly to the next chapter experience
+        setActiveChapter(nextChapterId);
+        // Also inform iframe to highlight the next chapter card
+        const iframes = document.querySelectorAll('iframe');
+        iframes.forEach((iframe) => {
+          try {
+            iframe.contentWindow?.postMessage(
+              { type: 'HIGHLIGHT_CHAPTER', chapterId: nextChapterId },
+              '*'
+            );
+          } catch {}
+        });
+      } else {
+        // Returned to sanctuary grid
+        setActiveChapter(null);
+      }
+    },
+    []
+  );
+
+  const isOverlayOpen = showHoloCard || activeChapter !== null;
+
   return (
     <main className="relative w-full h-screen overflow-hidden bg-[#05070a]">
-      {/* 1. Underlying Mulan Page - preserved state and position */}
+      {/* 1. Underlying Mulan Page - preserved state and scroll position */}
       <div
         className={`w-full h-full transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] ${
-          showHoloCard
+          isOverlayOpen
             ? 'scale-[0.985] filter brightness-50 contrast-125 pointer-events-none'
             : 'scale-100 filter brightness-100 contrast-100'
         }`}
@@ -60,17 +109,27 @@ export default function App() {
       {/* 2. Fullscreen Holographic Card Experience */}
       <HoloCardOverlay
         isOpen={showHoloCard}
-        onClose={handleClose}
-        onContinue={handleContinue}
+        onClose={handleCloseHolo}
+        onContinue={handleContinueHolo}
       >
         <DarkSoulsHoloCard
           variant="cindermane"
           cardName="CLAIRE"
           characterTitle="THE ASHEN WARRIOR · FA MULAN"
-          onClose={handleClose}
-          onContinue={handleContinue}
+          onClose={handleCloseHolo}
+          onContinue={handleContinueHolo}
         />
       </HoloCardOverlay>
+
+      {/* 3. Fullscreen Chapter Experience Modal */}
+      <ChapterExperienceModal
+        chapterId={activeChapter}
+        onClose={handleCloseChapter}
+        onContinue={handleContinueChapter}
+      />
+
+      {/* 4. Universal High-Z Custom Cursor for Desktop (z-index: 99999) */}
+      <CustomCursor />
     </main>
   );
 }

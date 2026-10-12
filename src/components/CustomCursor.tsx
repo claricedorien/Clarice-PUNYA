@@ -1,59 +1,63 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 /**
- * The Living Library Custom Cursor
- * - Zero-latency dot
- * - Snappy smooth trailing ring
- * - Dynamic "ENTER" / "VIEW STORY" badge on artefact hover
- * - Zero React re-renders on mouse movement
+ * Universal Custom Cursor
+ * - Small central dot: 6-8px
+ * - Outer subtle ring: 24-32px
+ * - Contrasting warm ivory / white (#F3F0EA, ring rgba(243,240,234,0.45))
+ * - High z-index (99999) above all overlays
+ * - High performance: requestAnimationFrame + refs (no react state on mousemove)
+ * - Safe fallback: if not supported or on touch, defaults cleanly without hiding system cursor
  */
 
-type CursorMode = 'default' | 'hover-story' | 'hover-nav' | 'hover-book' | 'hover-button' | 'hidden';
+export type CursorHoverType = 'default' | 'button' | 'close' | 'continue' | 'interactive';
 
-class CursorManager {
-  private listeners: ((mode: CursorMode, label?: string) => void)[] = [];
-  private currentMode: CursorMode = 'default';
+class CursorController {
+  private listeners: ((type: CursorHoverType, label?: string) => void)[] = [];
+  private currentType: CursorHoverType = 'default';
   private currentLabel: string = '';
 
-  public subscribe(fn: (mode: CursorMode, label?: string) => void) {
+  public subscribe(fn: (type: CursorHoverType, label?: string) => void) {
     this.listeners.push(fn);
     return () => {
       this.listeners = this.listeners.filter((l) => l !== fn);
     };
   }
 
-  public setMode(mode: CursorMode, label: string = '') {
-    if (this.currentMode === mode && this.currentLabel === label) return;
-    this.currentMode = mode;
+  public set(type: CursorHoverType, label: string = '') {
+    if (this.currentType === type && this.currentLabel === label) return;
+    this.currentType = type;
     this.currentLabel = label;
-    this.listeners.forEach((fn) => fn(mode, label));
-  }
-
-  public getMode() {
-    return this.currentMode;
+    this.listeners.forEach((fn) => fn(type, label));
   }
 }
 
-export const cursorManager = new CursorManager();
+export const cursorController = new CursorController();
 
 export const CustomCursor: React.FC = () => {
   const dotRef = useRef<HTMLDivElement | null>(null);
   const ringRef = useRef<HTMLDivElement | null>(null);
   const labelRef = useRef<HTMLSpanElement | null>(null);
+  const [isFinePointer, setIsFinePointer] = useState(false);
 
   useEffect(() => {
-    if (window.matchMedia('(pointer: coarse)').matches) {
-      return;
-    }
+    // Check fine pointer
+    const media = window.matchMedia('(pointer: fine)');
+    setIsFinePointer(media.matches);
 
-    const mousePos = { x: -100, y: -100, targetX: -100, targetY: -100 };
-    const ringPos = { x: -100, y: -100 };
+    if (!media.matches) return;
+
+    // Apply cursor:none to body safely now that custom cursor is active
+    document.body.classList.add('has-custom-cursor');
+
+    const mouse = { x: -100, y: -100, targetX: -100, targetY: -100 };
+    const ring = { x: -100, y: -100 };
     let isVisible = false;
     let animId: number;
 
     const onPointerMove = (e: PointerEvent) => {
-      mousePos.targetX = e.clientX;
-      mousePos.targetY = e.clientY;
+      mouse.targetX = e.clientX;
+      mouse.targetY = e.clientY;
 
       if (!isVisible) {
         isVisible = true;
@@ -61,11 +65,11 @@ export const CustomCursor: React.FC = () => {
         if (ringRef.current) ringRef.current.style.opacity = '1';
       }
 
-      // Fast update for real dot
-      mousePos.x = e.clientX;
-      mousePos.y = e.clientY;
+      // Zero-latency update for central dot
+      mouse.x = e.clientX;
+      mouse.y = e.clientY;
       if (dotRef.current) {
-        dotRef.current.style.transform = `translate3d(${mousePos.x}px, ${mousePos.y}px, 0)`;
+        dotRef.current.style.transform = `translate3d(${mouse.x}px, ${mouse.y}px, 0)`;
       }
     };
 
@@ -85,92 +89,136 @@ export const CustomCursor: React.FC = () => {
     document.addEventListener('pointerleave', onPointerLeave);
     document.addEventListener('pointerenter', onPointerEnter);
 
+    // Dynamic element hover detection for interactive elements
+    const onMouseOver = (e: MouseEvent) => {
+      const target = e.target as HTMLElement | null;
+      if (!target) return;
+
+      const interactive = target.closest('button, a, [role="button"], input, textarea, [data-cursor]');
+      if (interactive) {
+        const text = interactive.getAttribute('data-cursor-label') || '';
+        if (interactive.getAttribute('aria-label')?.toLowerCase().includes('close') || interactive.textContent?.toLowerCase().includes('close')) {
+          cursorController.set('close', text || 'CLOSE');
+        } else if (interactive.textContent?.toLowerCase().includes('continue') || interactive.textContent?.toLowerCase().includes('enter')) {
+          cursorController.set('continue', text || 'NEXT');
+        } else {
+          cursorController.set('button', text);
+        }
+      } else {
+        cursorController.set('default');
+      }
+    };
+
+    document.addEventListener('mouseover', onMouseOver, { passive: true });
+
+    // Snappy trailing loop for outer ring
     const renderLoop = () => {
       animId = requestAnimationFrame(renderLoop);
-      ringPos.x += (mousePos.targetX - ringPos.x) * 0.35;
-      ringPos.y += (mousePos.targetY - ringPos.y) * 0.35;
+      ring.x += (mouse.targetX - ring.x) * 0.38;
+      ring.y += (mouse.targetY - ring.y) * 0.38;
 
       if (ringRef.current) {
-        ringRef.current.style.transform = `translate3d(${ringPos.x}px, ${ringPos.y}px, 0)`;
+        ringRef.current.style.transform = `translate3d(${ring.x}px, ${ring.y}px, 0)`;
       }
     };
 
     animId = requestAnimationFrame(renderLoop);
 
-    const unsubscribe = cursorManager.subscribe((mode, label) => {
-      const ring = ringRef.current;
-      const dot = dotRef.current;
-      const labelEl = labelRef.current;
-      if (!ring || !dot || !labelEl) return;
+    const unsubscribe = cursorController.subscribe((type, label) => {
+      const r = ringRef.current;
+      const d = dotRef.current;
+      const l = labelRef.current;
+      if (!r || !d || !l) return;
 
-      if (mode === 'hover-story' || mode === 'hover-book') {
-        ring.style.width = '78px';
-        ring.style.height = '78px';
-        ring.style.marginLeft = '-39px';
-        ring.style.marginTop = '-39px';
-        ring.style.borderColor = 'rgba(201, 166, 107, 0.9)';
-        ring.style.backgroundColor = 'rgba(201, 166, 107, 0.1)';
-        ring.style.backdropFilter = 'blur(4px)';
+      if (type === 'close') {
+        r.style.width = '40px';
+        r.style.height = '40px';
+        r.style.marginLeft = '-20px';
+        r.style.marginTop = '-20px';
+        r.style.borderColor = 'rgba(255, 115, 96, 0.85)';
+        r.style.backgroundColor = 'rgba(224, 35, 28, 0.12)';
+        d.style.backgroundColor = '#ff7360';
 
-        labelEl.textContent = label || 'ENTER';
-        labelEl.style.opacity = '1';
-        labelEl.style.transform = 'scale(1)';
-        dot.style.opacity = '0';
-      } else if (mode === 'hover-nav' || mode === 'hover-button') {
-        ring.style.width = '42px';
-        ring.style.height = '42px';
-        ring.style.marginLeft = '-21px';
-        ring.style.marginTop = '-21px';
-        ring.style.borderColor = 'rgba(241, 238, 232, 0.6)';
-        ring.style.backgroundColor = 'rgba(241, 238, 232, 0.05)';
-        ring.style.backdropFilter = 'none';
+        if (label) {
+          l.textContent = label;
+          l.style.opacity = '1';
+        } else {
+          l.style.opacity = '0';
+        }
+      } else if (type === 'continue') {
+        r.style.width = '44px';
+        r.style.height = '44px';
+        r.style.marginLeft = '-22px';
+        r.style.marginTop = '-22px';
+        r.style.borderColor = 'rgba(201, 162, 74, 0.9)';
+        r.style.backgroundColor = 'rgba(201, 162, 74, 0.12)';
+        d.style.backgroundColor = '#f7df94';
 
-        labelEl.style.opacity = '0';
-        labelEl.style.transform = 'scale(0.8)';
-        dot.style.opacity = '1';
-      } else if (mode === 'hidden') {
-        ring.style.opacity = '0';
-        dot.style.opacity = '0';
+        if (label) {
+          l.textContent = label;
+          l.style.opacity = '1';
+        } else {
+          l.style.opacity = '0';
+        }
+      } else if (type === 'button' || type === 'interactive') {
+        r.style.width = '36px';
+        r.style.height = '36px';
+        r.style.marginLeft = '-18px';
+        r.style.marginTop = '-18px';
+        r.style.borderColor = 'rgba(243, 240, 234, 0.75)';
+        r.style.backgroundColor = 'rgba(243, 240, 234, 0.08)';
+        d.style.backgroundColor = '#F3F0EA';
+
+        if (label) {
+          l.textContent = label;
+          l.style.opacity = '1';
+        } else {
+          l.style.opacity = '0';
+        }
       } else {
-        ring.style.width = '24px';
-        ring.style.height = '24px';
-        ring.style.marginLeft = '-12px';
-        ring.style.marginTop = '-12px';
-        ring.style.borderColor = 'rgba(241, 238, 232, 0.35)';
-        ring.style.backgroundColor = 'transparent';
-        ring.style.backdropFilter = 'none';
-
-        labelEl.style.opacity = '0';
-        labelEl.style.transform = 'scale(0.8)';
-        dot.style.opacity = '1';
+        r.style.width = '26px';
+        r.style.height = '26px';
+        r.style.marginLeft = '-13px';
+        r.style.marginTop = '-13px';
+        r.style.borderColor = 'rgba(243, 240, 234, 0.45)';
+        r.style.backgroundColor = 'transparent';
+        d.style.backgroundColor = '#F3F0EA';
+        l.style.opacity = '0';
       }
     });
 
     return () => {
       cancelAnimationFrame(animId);
+      document.body.classList.remove('has-custom-cursor');
       window.removeEventListener('pointermove', onPointerMove);
       document.removeEventListener('pointerleave', onPointerLeave);
       document.removeEventListener('pointerenter', onPointerEnter);
+      document.removeEventListener('mouseover', onMouseOver);
       unsubscribe();
     };
   }, []);
 
+  if (!isFinePointer) return null;
+
   return (
-    <div className="fixed inset-0 pointer-events-none z-[9999] overflow-hidden">
-      {/* Real cursor dot */}
+    <div
+      className="fixed inset-0 pointer-events-none z-[99999] overflow-hidden select-none"
+      aria-hidden="true"
+    >
+      {/* Central responsive dot: 7px warm white */}
       <div
         ref={dotRef}
-        className="fixed top-0 left-0 w-2 h-2 -ml-1 -mt-1 rounded-full bg-[#F1EEE8] shadow-sm shadow-[#F1EEE8] pointer-events-none opacity-0 transition-opacity duration-150"
+        className="fixed top-0 left-0 w-[7px] h-[7px] -ml-[3.5px] -mt-[3.5px] rounded-full bg-[#F3F0EA] shadow-[0_0_8px_rgba(243,240,234,0.6)] pointer-events-none opacity-0 transition-opacity duration-150"
         style={{
           willChange: 'transform',
           transform: 'translate3d(-100px, -100px, 0)',
         }}
       />
 
-      {/* Trailing smooth ring */}
+      {/* Outer subtle ring: 26px trailing smoothly */}
       <div
         ref={ringRef}
-        className="fixed top-0 left-0 w-6 h-6 -ml-3 -mt-3 rounded-full border border-white/40 pointer-events-none opacity-0 flex items-center justify-center transition-[width,height,margin,border-color,background-color] duration-200 ease-out"
+        className="fixed top-0 left-0 w-[26px] h-[26px] -ml-[13px] -mt-[13px] rounded-full border border-[rgba(243,240,234,0.45)] pointer-events-none opacity-0 flex items-center justify-center transition-[width,height,margin,border-color,background-color] duration-200 ease-out"
         style={{
           willChange: 'transform',
           transform: 'translate3d(-100px, -100px, 0)',
@@ -178,9 +226,9 @@ export const CustomCursor: React.FC = () => {
       >
         <span
           ref={labelRef}
-          className="text-[10px] font-mono tracking-widest text-[#E8E1D5] uppercase font-semibold opacity-0 transition-all duration-200 pointer-events-none select-none scale-75"
+          className="text-[9px] font-mono tracking-widest text-[#F3F0EA] uppercase font-semibold opacity-0 transition-opacity duration-200 pointer-events-none select-none"
         >
-          ENTER
+          OPEN
         </span>
       </div>
     </div>

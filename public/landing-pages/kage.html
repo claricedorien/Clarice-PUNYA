@@ -654,12 +654,50 @@ body[data-layout-curriculum="b"] .cur{
 }
 body[data-layout-curriculum="b"] .les{
   display:flex; flex-direction:column; align-items:flex-start; min-height:250px;
-  padding:24px; gap:14px; border:0; background:rgba(5,7,10,.84); overflow:hidden;
+  padding:24px; gap:14px; border:1px solid transparent; background:rgba(5,7,10,.84); overflow:hidden;
+  transition:padding .5s var(--ease-out), background-color .4s ease, border-color .4s ease, box-shadow .4s ease, transform .4s ease;
+  user-select:none;
 }
 body[data-layout-curriculum="b"] .les:nth-child(-n+2){ grid-column:span 3; }
 body[data-layout-curriculum="b"] .les:nth-child(n+3){ grid-column:span 2; }
 body[data-layout-curriculum="b"] .les::before{ left:0; background:linear-gradient(145deg,rgba(224,35,28,.13),transparent 58%); }
-body[data-layout-curriculum="b"] .les:hover{ padding-left:32px; }
+body[data-layout-curriculum="b"] .les:hover{
+  padding-left:32px;
+  background:rgba(12,17,25,.92);
+  border-color:rgba(223,231,224,.32);
+  box-shadow:inset 0 0 24px rgba(224,35,28,.08), 0 12px 32px -8px rgba(0,0,0,.6);
+}
+body[data-layout-curriculum="b"] .les:hover .les-bg{
+  opacity:0.52; filter:saturate(1.25) brightness(1.05);
+  transform:scale(1.04) translateY(-2px);
+}
+body[data-layout-curriculum="b"] .les.touch-selected{
+  background:rgba(18,24,36,.96);
+  border-color:rgba(201,162,74,.65);
+  box-shadow:0 0 24px rgba(201,162,74,.18);
+  padding-left:28px;
+}
+body[data-layout-curriculum="b"] .les.touch-selected .les-bg{
+  opacity:0.52; filter:saturate(1.2) brightness(1.05);
+}
+body[data-layout-curriculum="b"] .les .les-enter{
+  display:inline-flex; align-items:center; gap:8px;
+  font-size:10px; font-weight:500; letter-spacing:.22em; text-transform:uppercase;
+  color:#f7df94; opacity:0; transform:translateX(-6px);
+  transition:opacity .35s ease, transform .35s ease;
+  margin-top:auto; padding-top:8px; pointer-events:auto;
+}
+body[data-layout-curriculum="b"] .les .les-enter svg{
+  transition:transform .3s ease;
+}
+body[data-layout-curriculum="b"] .les:hover .les-enter,
+body[data-layout-curriculum="b"] .les.touch-selected .les-enter{
+  opacity:1; transform:none;
+}
+body[data-layout-curriculum="b"] .les:hover .les-enter svg,
+body[data-layout-curriculum="b"] .les.touch-selected .les-enter svg{
+  transform:translateX(3px);
+}
 body[data-layout-curriculum="b"] .les h3{ font-size:clamp(20px,2vw,30px); }
 body[data-layout-curriculum="b"] .les p{ display:block; max-width:34ch; }
 body[data-layout-curriculum="b"] .les .t{ text-align:left; margin-top:auto; }
@@ -1147,39 +1185,44 @@ body[data-layout-footer="b"] .foot-base span:last-child{ text-align:right; }
     <p class="body-lg" data-rv="up">Follow Mulan through five chapters — from the House of Fa to the final reclaiming of her name.</p>
   </div>
   <div class="cur" id="cur">
-    <div class="les" data-les="0" data-cursor data-img="secret-pathways-assets/mulan-01-before-armor.jpg">
+    <div class="les" data-les="0" data-chapter-id="before-the-armor" data-cursor data-img="secret-pathways-assets/mulan-01-before-armor.jpg" role="button" tabindex="0" aria-label="Chapter 01: Before the Armor — Enter chapter">
       <div class="les-bg" style="background-image:url('secret-pathways-assets/mulan-01-before-armor.jpg')"></div>
       <span class="k">01</span>
       <h3>Before the Armor<em class="jp">盔甲之前</em></h3>
       <p>In the House of Fa, Mulan struggles between duty, tradition, and the quiet feeling that she was meant for more.</p>
+      <div class="les-enter"><span>Enter Chapter</span><svg viewBox="0 0 14 14" fill="none" width="12" height="12"><path d="M3 11 11 3M5 3h6v6" stroke="currentColor" stroke-width="1.3"/></svg></div>
       <span class="t">14 min</span><i class="bar"></i>
     </div>
-    <div class="les" data-les="1" data-cursor data-img="secret-pathways-assets/mulan-02-summons.jpg">
+    <div class="les" data-les="1" data-chapter-id="the-summons" data-cursor data-img="secret-pathways-assets/mulan-02-summons.jpg" role="button" tabindex="0" aria-label="Chapter 02: The Summons — Enter chapter">
       <div class="les-bg" style="background-image:url('secret-pathways-assets/mulan-02-summons.jpg')"></div>
       <span class="k">02</span>
       <h3>The Summons<em class="jp">征召令</em></h3>
       <p>An imperial decree arrives: one man from every family must go to war, and Mulan watches her wounded father answer the call.</p>
+      <div class="les-enter"><span>Enter Chapter</span><svg viewBox="0 0 14 14" fill="none" width="12" height="12"><path d="M3 11 11 3M5 3h6v6" stroke="currentColor" stroke-width="1.3"/></svg></div>
       <span class="t">18 min</span><i class="bar"></i>
     </div>
-    <div class="les" data-les="2" data-cursor data-img="secret-pathways-assets/mulan-03-borrowed-armor.jpg">
+    <div class="les" data-les="2" data-chapter-id="borrowed-armor" data-cursor data-img="secret-pathways-assets/mulan-03-borrowed-armor.jpg" role="button" tabindex="0" aria-label="Chapter 03: Borrowed Armor — Enter chapter">
       <div class="les-bg" style="background-image:url('secret-pathways-assets/mulan-03-borrowed-armor.jpg')"></div>
       <span class="k">03</span>
       <h3>Borrowed Armor<em class="jp">借来的盔甲</em></h3>
       <p>Before sunrise, Mulan cuts her hair, takes her father’s armor, and rides into the unknown under a borrowed name.</p>
+      <div class="les-enter"><span>Enter Chapter</span><svg viewBox="0 0 14 14" fill="none" width="12" height="12"><path d="M3 11 11 3M5 3h6v6" stroke="currentColor" stroke-width="1.3"/></svg></div>
       <span class="t">21 min</span><i class="bar"></i>
     </div>
-    <div class="les" data-les="3" data-cursor data-img="secret-pathways-assets/mulan-04-mountain.jpg">
+    <div class="les" data-les="3" data-chapter-id="the-mountain" data-cursor data-img="secret-pathways-assets/mulan-04-mountain.jpg" role="button" tabindex="0" aria-label="Chapter 04: The Mountain — Enter chapter">
       <div class="les-bg" style="background-image:url('secret-pathways-assets/mulan-04-mountain.jpg')"></div>
       <span class="k">04</span>
       <h3>The Mountain<em class="jp">雪山之战</em></h3>
       <p>At war, Mulan learns that courage is not only strength—sometimes survival belongs to the one who sees differently.</p>
+      <div class="les-enter"><span>Enter Chapter</span><svg viewBox="0 0 14 14" fill="none" width="12" height="12"><path d="M3 11 11 3M5 3h6v6" stroke="currentColor" stroke-width="1.3"/></svg></div>
       <span class="t">17 min</span><i class="bar"></i>
     </div>
-    <div class="les" data-les="4" data-cursor data-img="secret-pathways-assets/mulan-05-honor.jpg">
+    <div class="les" data-les="4" data-chapter-id="honor-without-disguise" data-cursor data-img="secret-pathways-assets/mulan-05-honor.jpg" role="button" tabindex="0" aria-label="Chapter 05: Honor Without Disguise — Enter chapter">
       <div class="les-bg" style="background-image:url('secret-pathways-assets/mulan-05-honor.jpg')"></div>
       <span class="k">05</span>
       <h3>Honor Without Disguise<em class="jp">无伪之荣</em></h3>
       <p>Her secret is revealed, yet Mulan returns to save the capital and prove that honor belongs to the truth, not the disguise.</p>
+      <div class="les-enter"><span>Enter Chapter</span><svg viewBox="0 0 14 14" fill="none" width="12" height="12"><path d="M3 11 11 3M5 3h6v6" stroke="currentColor" stroke-width="1.3"/></svg></div>
       <span class="t">22 min</span><i class="bar"></i>
     </div>
   </div>
@@ -4541,6 +4584,110 @@ function wireCurPreview() {
   });
 }
 
+function wireChapterCards() {
+  const cards = $$('#cur .les');
+  if (!cards.length) return;
+
+  function openChapter(chId) {
+    if (!chId) return;
+    try {
+      if (window.parent && window.parent !== window) {
+        window.parent.postMessage({ type: 'OPEN_CHAPTER', chapterId: chId }, '*');
+      }
+    } catch {}
+    window.dispatchEvent(new CustomEvent('OPEN_CHAPTER', { detail: { chapterId: chId } }));
+  }
+
+  cards.forEach(card => {
+    const chId = card.dataset.chapterId;
+    if (!chId) return;
+
+    // Desktop click handler
+    card.addEventListener('click', e => {
+      // If triggered by pointer that is mouse, open immediately
+      if (e.pointerType === 'touch') return; // Handled by touch logic
+      openChapter(chId);
+    });
+
+    // Keyboard accessibility: Enter or Space
+    card.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        openChapter(chId);
+      }
+    });
+
+    // Touch device gesture handling: differentiate tap vs scroll
+    let startX = 0, startY = 0, isTouchMoving = false, touchStartTime = 0;
+
+    card.addEventListener('touchstart', e => {
+      if (!e.touches || e.touches.length !== 1) return;
+      const t = e.touches[0];
+      startX = t.clientX;
+      startY = t.clientY;
+      isTouchMoving = false;
+      touchStartTime = Date.now();
+    }, { passive: true });
+
+    card.addEventListener('touchmove', e => {
+      if (!e.touches || e.touches.length !== 1) return;
+      const t = e.touches[0];
+      const dx = Math.abs(t.clientX - startX);
+      const dy = Math.abs(t.clientY - startY);
+      if (dx > 10 || dy > 10) {
+        isTouchMoving = true;
+      }
+    }, { passive: true });
+
+    card.addEventListener('touchend', e => {
+      // If user moved more than 10px, it is a scroll/swipe: DO NOT open
+      if (isTouchMoving) {
+        isTouchMoving = false;
+        return;
+      }
+
+      const elapsed = Date.now() - touchStartTime;
+      if (elapsed > 700) {
+        // Long press, don't trigger tap
+        return;
+      }
+
+      // Check if this card is already selected on touch
+      const isSelected = card.classList.contains('touch-selected');
+      if (isSelected) {
+        // Second intentional tap: open chapter
+        openChapter(chId);
+      } else {
+        // First tap: select card and show ENTER CHAPTER
+        cards.forEach(c => c.classList.remove('touch-selected'));
+        card.classList.add('touch-selected');
+        // Prevent accidental synthetic click bubbling
+        e.preventDefault();
+      }
+    });
+  });
+
+  // Tap outside removes touch-selected
+  document.addEventListener('touchstart', e => {
+    if (!e.target.closest('#cur .les')) {
+      cards.forEach(c => c.classList.remove('touch-selected'));
+    }
+  }, { passive: true });
+
+  // Listen for message from parent shell to scroll to / highlight a specific chapter
+  window.addEventListener('message', e => {
+    if (e.data?.type === 'HIGHLIGHT_CHAPTER') {
+      const targetId = e.data.chapterId;
+      const targetCard = $(`#cur .les[data-chapter-id="${targetId}"]`);
+      if (targetCard) {
+        cards.forEach(c => c.classList.remove('touch-selected'));
+        targetCard.classList.add('touch-selected');
+        targetCard.scrollIntoView({ behavior: REDUCE ? 'auto' : 'smooth', block: 'nearest' });
+      }
+    }
+  });
+}
+
 function freezeStatic(obj) {
   if (!obj) return;
   obj.traverse(child => {
@@ -4924,7 +5071,7 @@ const JOBS = [
 
 function boot() {
   makeGrain();
-  wireReveals(); wireForegroundStages(); wireNav(); wireHeroExit(); wireFocus(); wireCursor(); wireCurPreview();
+  wireReveals(); wireForegroundStages(); wireNav(); wireHeroExit(); wireFocus(); wireCursor(); wireCurPreview(); wireChapterCards();
   document.body.classList.add('is-locked');
   let i = 0;
   const step = () => {
