@@ -2,6 +2,7 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { JapaneseTowerLandscape } from '../shaders/japanese-tower/JapaneseTowerLandscape';
 import { Chapter01Experience } from './Chapter01Experience';
 import { Chapter02Experience } from './Chapter02Experience';
+import { Chapter03Experience } from './Chapter03Experience';
 import '../shaders/threeui.css';
 
 export type ChapterId =
@@ -235,6 +236,17 @@ export function ChapterExperienceModal({
         isOpen={Boolean(chapterId === 'the-summons')}
         onClose={onClose}
         onContinue={() => onContinue('borrowed-armor')}
+      />
+    );
+  }
+
+  // Chapter 03: Fullscreen cinematic story experience (not inside a modal card)
+  if (chapterId === 'borrowed-armor') {
+    return (
+      <Chapter03Experience
+        isOpen={Boolean(chapterId === 'borrowed-armor')}
+        onClose={onClose}
+        onContinue={() => onContinue('the-mountain')}
       />
     );
   }

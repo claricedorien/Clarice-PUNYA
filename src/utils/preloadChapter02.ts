@@ -24,9 +24,14 @@ export function preloadChapter02(): void {
         // Ignore offline / caching quirks
       });
 
-      // 2. Dynamic import prefetch of the React wrapper component
+      // 2. Dynamic import prefetch of the React wrapper component and Chapter 03
       import('../shaders/japanese-tower/JapaneseTowerLandscape').catch(() => {});
       import('../components/Chapter02Experience').catch(() => {});
+      import('../components/Chapter03Experience').catch(() => {});
+
+      // 3. Preload Chapter 03 cinematic artwork
+      const img = new Image();
+      img.src = '/landing-pages/secret-pathways-assets/mulan-03-borrowed-armor.jpg';
     } catch {
       // Ignore background prefetch errors
     }
