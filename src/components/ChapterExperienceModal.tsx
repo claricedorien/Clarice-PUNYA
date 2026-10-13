@@ -3,6 +3,8 @@ import { JapaneseTowerLandscape } from '../shaders/japanese-tower/JapaneseTowerL
 import { Chapter01Experience } from './Chapter01Experience';
 import { Chapter02Experience } from './Chapter02Experience';
 import { Chapter03Experience } from './Chapter03Experience';
+import { Chapter04Experience } from './Chapter04Experience';
+import { Chapter05Experience } from './Chapter05Experience';
 import '../shaders/threeui.css';
 
 export type ChapterId =
@@ -251,15 +253,38 @@ export function ChapterExperienceModal({
     );
   }
 
-  const data = chapterId ? CHAPTERS_DATA[chapterId] : null;
-  if (!data) return null;
+  // Chapter 04: Fullscreen cinematic story experience (not inside a modal card)
+  if (chapterId === 'the-mountain') {
+    return (
+      <Chapter04Experience
+        isOpen={Boolean(chapterId === 'the-mountain')}
+        onClose={onClose}
+        onContinue={() => onContinue('honor-without-disguise')}
+      />
+    );
+  }
 
-  const currentIndex = CHAPTER_ORDER.indexOf(chapterId as ChapterId);
+  // Chapter 05: Fullscreen cinematic story climax (not inside a modal card)
+  if (chapterId === 'honor-without-disguise') {
+    return (
+      <Chapter05Experience
+        isOpen={Boolean(chapterId === 'honor-without-disguise')}
+        onClose={onClose}
+        onContinue={() => onContinue(null)}
+      />
+    );
+  }
+
+  const currentId = chapterId as ChapterId | null;
+  const data = currentId ? CHAPTERS_DATA[currentId] : null;
+  if (!data || !currentId) return null;
+
+  const currentIndex = CHAPTER_ORDER.indexOf(currentId);
   const nextChapterId =
     currentIndex >= 0 && currentIndex < CHAPTER_ORDER.length - 1
       ? CHAPTER_ORDER[currentIndex + 1]
       : null;
-  const nextChapterData = nextChapterId ? CHAPTERS_DATA[nextChapterId as ChapterId] : null;
+  const nextChapterData = nextChapterId ? CHAPTERS_DATA[nextChapterId] : null;
 
   return (
     <div

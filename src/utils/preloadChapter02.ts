@@ -24,14 +24,20 @@ export function preloadChapter02(): void {
         // Ignore offline / caching quirks
       });
 
-      // 2. Dynamic import prefetch of the React wrapper component and Chapter 03
+      // 2. Dynamic import prefetch of the React components
       import('../shaders/japanese-tower/JapaneseTowerLandscape').catch(() => {});
       import('../components/Chapter02Experience').catch(() => {});
       import('../components/Chapter03Experience').catch(() => {});
+      import('../components/Chapter04Experience').catch(() => {});
+      import('../components/Chapter05Experience').catch(() => {});
 
-      // 3. Preload Chapter 03 cinematic artwork
-      const img = new Image();
-      img.src = '/landing-pages/secret-pathways-assets/mulan-03-borrowed-armor.jpg';
+      // 3. Preload Chapter 03, 04 & 05 cinematic artwork
+      const img3 = new Image();
+      img3.src = '/landing-pages/secret-pathways-assets/mulan-03-borrowed-armor.jpg';
+      const img4 = new Image();
+      img4.src = '/landing-pages/secret-pathways-assets/mulan-04-mountain.jpg';
+      const img5 = new Image();
+      img5.src = '/landing-pages/secret-pathways-assets/mulan-05-honor.jpg';
     } catch {
       // Ignore background prefetch errors
     }
