@@ -4582,6 +4582,17 @@ function wireCurPreview() {
       p.classList.remove('active');
     });
   });
+
+  // Forward first intentional user gesture to parent for audio unlock
+  ['pointerdown', 'touchstart', 'keydown', 'scroll'].forEach(ev => {
+    window.addEventListener(ev, () => {
+      try {
+        if (window.parent && window.parent !== window) {
+          window.parent.postMessage({ type: 'USER_INTERACTION' }, '*');
+        }
+      } catch {}
+    }, { passive: true, once: true });
+  });
 }
 
 function wireChapterCards() {

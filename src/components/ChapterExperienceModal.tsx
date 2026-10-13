@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { JapaneseTowerLandscape } from '../shaders/japanese-tower/JapaneseTowerLandscape';
 import { Chapter01Experience } from './Chapter01Experience';
+import { Chapter02Experience } from './Chapter02Experience';
 import '../shaders/threeui.css';
 
 export type ChapterId =
@@ -227,15 +228,26 @@ export function ChapterExperienceModal({
     );
   }
 
+  // Chapter 02: Fullscreen ThreeUI Chinese pagoda landscape experience (not inside a modal card)
+  if (chapterId === 'the-summons') {
+    return (
+      <Chapter02Experience
+        isOpen={Boolean(chapterId === 'the-summons')}
+        onClose={onClose}
+        onContinue={() => onContinue('borrowed-armor')}
+      />
+    );
+  }
+
   const data = chapterId ? CHAPTERS_DATA[chapterId] : null;
   if (!data) return null;
 
-  const currentIndex = CHAPTER_ORDER.indexOf(chapterId);
+  const currentIndex = CHAPTER_ORDER.indexOf(chapterId as ChapterId);
   const nextChapterId =
     currentIndex >= 0 && currentIndex < CHAPTER_ORDER.length - 1
       ? CHAPTER_ORDER[currentIndex + 1]
       : null;
-  const nextChapterData = nextChapterId ? CHAPTERS_DATA[nextChapterId] : null;
+  const nextChapterData = nextChapterId ? CHAPTERS_DATA[nextChapterId as ChapterId] : null;
 
   return (
     <div
@@ -286,90 +298,26 @@ export function ChapterExperienceModal({
             : 'scale-[0.96] opacity-0 translate-y-4'
         }`}
       >
-        {/* CHAPTER 02: Exact ThreeUI JapaneseTowerLandscape component with country="china" */}
-        {chapterId === 'the-summons' ? (
-          <div className="relative w-full max-w-6xl h-full min-h-[580px] max-h-[88vh] my-auto flex flex-col rounded-2xl overflow-hidden border border-[#c9a24a]/30 bg-[#080b10] shadow-[0_20px_70px_rgba(0,0,0,0.85)]">
-            {/* Header banner */}
-            <div className="flex-none px-6 py-4 border-b border-[#dfe7e0]/10 bg-[#06080d]/90 backdrop-blur-sm flex items-center justify-between gap-4">
-              <div className="flex items-center gap-3">
-                <span className="text-xs font-mono text-[#e0231c] tracking-widest font-bold">
-                  CHAPTER 02
-                </span>
-                <span className="text-xs text-[#dfe7e0]/40">/</span>
-                <h3 className="text-sm font-medium tracking-wide text-[#f1eee8] uppercase">
-                  The Summons · 征召令
-                </h3>
-              </div>
-              <div className="flex items-center gap-3">
-                <span className="text-[11px] font-mono text-[#c9a24a] uppercase tracking-wider hidden sm:inline">
-                  ThreeUI · Chinese Pagoda
-                </span>
-                <span className="w-2 h-2 rounded-full bg-[#22c55e] animate-pulse" />
-              </div>
+        {/* CHAPTERS 03 / 04 / 05: Reusable cinematic chapter transition shell */}
+        <div className="relative w-full max-w-5xl my-auto rounded-2xl overflow-hidden border border-[#dfe7e0]/15 bg-[#080b10]/95 backdrop-blur-xl shadow-[0_24px_80px_rgba(0,0,0,0.9)] flex flex-col">
+          {/* Top Chapter Meta Bar */}
+          <div className="px-6 sm:px-10 py-5 border-b border-[#dfe7e0]/10 flex flex-wrap items-center justify-between gap-4 bg-[#05070a]/80">
+            <div className="flex items-center gap-3">
+              <span className="px-2.5 py-1 rounded bg-[#e0231c]/20 border border-[#e0231c]/40 text-[#ff7360] font-mono text-xs font-bold tracking-widest">
+                CHAPTER {data.number}
+              </span>
+              <span className="text-xs font-mono uppercase tracking-widest text-[#c9a24a]">
+                {data.theme}
+              </span>
             </div>
-
-            {/* Live ThreeUI JapaneseTowerLandscape container */}
-            <div className="relative flex-1 w-full h-full min-h-[380px] overflow-hidden bg-[#ecdcbc]">
-              <JapaneseTowerLandscape
-                country="china"
-                sourceUrl="/japanese-tower.html"
-                className="w-full h-full"
-              />
-
-              {/* Atmospheric overlay text strip */}
-              <div className="absolute bottom-4 left-4 right-4 pointer-events-none flex flex-col sm:flex-row items-start sm:items-end justify-between gap-2 p-4 rounded-lg bg-[#070a0e]/85 backdrop-blur-md border border-[#c9a24a]/20">
-                <div className="max-w-xl">
-                  <p className="text-xs sm:text-sm font-serif italic text-[#e8e1d5] leading-relaxed">
-                    “An imperial decree arrives: one man from every family must go to war, and Mulan watches her wounded father answer the call.”
-                  </p>
-                  <span className="text-[10px] font-mono uppercase tracking-widest text-[#c9a24a] block mt-1">
-                    Theme: Imperial authority · Ancient China · Tradition
-                  </span>
-                </div>
-                <div className="text-[11px] font-mono text-[#dfe7e0]/60 uppercase tracking-widest whitespace-nowrap">
-                  18 min · 02 / 05
-                </div>
-              </div>
-            </div>
-
-            {/* Bottom Action Footer */}
-            <div className="flex-none px-6 py-4 border-t border-[#dfe7e0]/10 bg-[#06080d]/90 flex items-center justify-between gap-4">
-              <button
-                onClick={handleClose}
-                className="px-4 py-2 min-h-[44px] text-xs font-mono tracking-widest uppercase text-[#dfe7e0]/70 hover:text-white transition-colors cursor-pointer"
-              >
-                ← Return to Sanctuary
-              </button>
-              <button
-                onClick={handleContinue}
-                className="group flex items-center gap-3 px-6 py-2.5 min-h-[44px] rounded-full border border-[#c9a24a]/60 bg-[#0c121b] text-[#f7df94] text-xs font-medium uppercase tracking-[0.2em] hover:border-[#f7df94] hover:bg-[#151f2e] hover:shadow-[0_0_24px_rgba(201,162,74,0.35)] active:scale-95 transition-all cursor-pointer"
-              >
-                <span>Continue: 03 Borrowed Armor</span>
-                <span className="group-hover:translate-x-1 transition-transform">→</span>
-              </button>
+            <div className="flex items-center gap-4 text-xs font-mono text-[#dfe7e0]/60">
+              <span>{data.duration}</span>
+              <span>·</span>
+              <span>{data.number} / 05</span>
             </div>
           </div>
-        ) : (
-          /* CHAPTERS 01 / 03 / 04 / 05: Reusable cinematic chapter transition shell */
-          <div className="relative w-full max-w-5xl my-auto rounded-2xl overflow-hidden border border-[#dfe7e0]/15 bg-[#080b10]/95 backdrop-blur-xl shadow-[0_24px_80px_rgba(0,0,0,0.9)] flex flex-col">
-            {/* Top Chapter Meta Bar */}
-            <div className="px-6 sm:px-10 py-5 border-b border-[#dfe7e0]/10 flex flex-wrap items-center justify-between gap-4 bg-[#05070a]/80">
-              <div className="flex items-center gap-3">
-                <span className="px-2.5 py-1 rounded bg-[#e0231c]/20 border border-[#e0231c]/40 text-[#ff7360] font-mono text-xs font-bold tracking-widest">
-                  CHAPTER {data.number}
-                </span>
-                <span className="text-xs font-mono uppercase tracking-widest text-[#c9a24a]">
-                  {data.theme}
-                </span>
-              </div>
-              <div className="flex items-center gap-4 text-xs font-mono text-[#dfe7e0]/60">
-                <span>{data.duration}</span>
-                <span>·</span>
-                <span>{data.number} / 05</span>
-              </div>
-            </div>
 
-            {/* Split Content: Hero Image + Story Narrative */}
+          {/* Split Content: Hero Image + Story Narrative */}
             <div className="grid grid-cols-1 md:grid-cols-12 gap-0 overflow-hidden">
               {/* Left Column: Visual Artwork */}
               <div className="md:col-span-5 relative min-h-[280px] md:min-h-[480px] overflow-hidden bg-[#040609]">
@@ -445,7 +393,6 @@ export function ChapterExperienceModal({
               </div>
             </div>
           </div>
-        )}
       </div>
     </div>
   );

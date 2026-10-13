@@ -5,12 +5,27 @@ import { HoloCardOverlay } from './components/HoloCardOverlay';
 import { CustomCursor } from './components/CustomCursor';
 import {
   ChapterExperienceModal,
-  ChapterId
+  ChapterId,
 } from './components/ChapterExperienceModal';
+import { AudioProvider, useAudio } from './audio/AudioContext';
+import { SoundControl } from './components/SoundControl';
+import { preloadChapter02 } from './utils/preloadChapter02';
 
-export default function App() {
+function AppContent() {
   const [showHoloCard, setShowHoloCard] = useState(false);
   const [activeChapter, setActiveChapter] = useState<ChapterId | null>(null);
+  const { setDucked } = useAudio();
+
+  // 1. Preload Chapter 02 (ThreeUI Chinese Tower Landscape) during browser idle time
+  useEffect(() => {
+    preloadChapter02();
+  }, []);
+
+  // 2. Audio Ducking / Crossfade: smooth volume ducking when entering chapters or holo card
+  const isOverlayOpen = showHoloCard || activeChapter !== null;
+  useEffect(() => {
+    setDucked(isOverlayOpen);
+  }, [isOverlayOpen, setDucked]);
 
   // Listen for message from iframe (kage.html) or custom event
   useEffect(() => {
@@ -91,8 +106,6 @@ export default function App() {
     []
   );
 
-  const isOverlayOpen = showHoloCard || activeChapter !== null;
-
   return (
     <main className="relative w-full h-screen overflow-hidden bg-[#05070a]">
       {/* 1. Underlying Mulan Page - preserved state and scroll position */}
@@ -121,15 +134,26 @@ export default function App() {
         />
       </HoloCardOverlay>
 
-      {/* 3. Fullscreen Chapter Experience Modal */}
+      {/* 3. Fullscreen Chapter Experience Modal / Overlay */}
       <ChapterExperienceModal
         chapterId={activeChapter}
         onClose={handleCloseChapter}
         onContinue={handleContinueChapter}
       />
 
-      {/* 4. Universal High-Z Custom Cursor for Desktop (z-index: 99999) */}
+      {/* 4. Persistent Sound Control (SOUND ON / SOUND OFF) */}
+      <SoundControl />
+
+      {/* 5. Universal High-Z Custom Cursor for Desktop (z-index: 99999) */}
       <CustomCursor />
     </main>
+  );
+}
+
+export default function App() {
+  return (
+    <AudioProvider>
+      <AppContent />
+    </AudioProvider>
   );
 }

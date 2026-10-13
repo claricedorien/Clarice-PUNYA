@@ -30,9 +30,15 @@ class CursorController {
     this.currentLabel = label;
     this.listeners.forEach((fn) => fn(type, label));
   }
+
+  public setMode(mode: string, label: string = '') {
+    const mapped: CursorHoverType = mode === 'hidden' ? 'default' : (mode.includes('hover') ? 'interactive' : 'default');
+    this.set(mapped, label);
+  }
 }
 
 export const cursorController = new CursorController();
+export const cursorManager = cursorController;
 
 export const CustomCursor: React.FC = () => {
   const dotRef = useRef<HTMLDivElement | null>(null);

@@ -3336,7 +3336,7 @@ window.addEventListener('keydown',e=>{
  * 12.  loop
  * ------------------------------------------------------------------ */
 window.addEventListener('resize',layout);
-applyStyle(0);
+const _initialCountryStyle=(()=>{try{const p=new URLSearchParams(window.location.search).get("country");if(p){const idx=STYLES.findIndex(s=>s.id.toLowerCase()===p.toLowerCase()||(p.toLowerCase()==="china"&&s.id==="CHINA"));if(idx>=0)return idx;}}catch(e){}return 0;})();applyStyle(_initialCountryStyle);
 applyWeather(0,true);
 applyTheme(0,true);
 autoStartAudio();
